@@ -25,7 +25,7 @@
         <div class="d-flex justify-content-center">
             <button class="btn btn-primary" type="button" disabled>
                 <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
-                Loading...
+                Please Wait...
             </button>
         </div>
     </div>
@@ -100,16 +100,33 @@
                 <div class="modal-body">
                     <form action="#" method="get">
                         <div class="form-floating mb-3">
-                            <input type="email" class="form-control" id="emailInput"
+                            <input type="email" class="form-control" id="emailbox"
                                 placeholder="example@example.com" />
                             <label for="emailInput"> Email </label>
                         </div>
                         <div class="text-center">
-                            <button class="btn btn-outline-primary m-1" type="submit">
+                            <button class="btn btn-outline-primary m-1" onclick="sendEmail()" type="button">
                                 Send Email
                             </button>
                         </div>
                     </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal to send converted file to an email address -->
+    <div class="modal fade" id="successModel" tabindex="-1" aria-labelledby="successModelLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                            <strong>Success ❤️ </strong> Pdf version of the webpage is sent to your email !
+                          </div>
+                      </div>
                 </div>
             </div>
         </div>

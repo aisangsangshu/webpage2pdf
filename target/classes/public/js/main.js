@@ -15,7 +15,7 @@ function downloadFile() {
 
   // Make the fetch request
   fetch(fileurl)
-    .then(response => {
+    .then((response) => {
       // Check if the request was successful
       if (!response.ok) {
         document.getElementById("alertMsg").style.visibility = "visible";
@@ -36,7 +36,7 @@ function downloadFile() {
       }
 
       // Return the response as a Blob along with the filename
-      return response.blob().then(blob => ({ blob, fileName }));
+      return response.blob().then((blob) => ({ blob, fileName }));
     })
     .then(({ blob, fileName }) => {
       // Create a new link element
@@ -54,12 +54,57 @@ function downloadFile() {
       document.getElementsByTagName("button")[1].disabled = false;
       document.getElementsByTagName("button")[2].disabled = false;
     })
-    .catch(error => {
+    .catch((error) => {
       // Handle errors here
       document.getElementById("loader").style.visibility = "hidden";
       document.getElementById("alertMsg").style.visibility = "visible";
       document.getElementsByTagName("button")[1].disabled = false;
       document.getElementsByTagName("button")[2].disabled = false;
       console.error("There was a problem with the fetch operation:", error);
+    });
+}
+function sendEmail() {
+  const api = "http://localhost:8080/api/convert/mail?url=";
+  let url = document.getElementById("urlbox").value;
+  let email = document.getElementById("emailbox").value;
+  let fileurl = api + encodeURIComponent(url) + "&&email=" + email; // Ensure URL is encoded
+  console.log(fileurl);
+  if (url === "" || email === "") {
+    alert("Please Enter Valid inputs to proceed.");
+    return;
+  }
+  document.getElementsByTagName("button")[3].click();
+  document.getElementsByTagName("button")[1].disabled = true;
+  document.getElementsByTagName("button")[2].disabled = true;
+  document.getElementById("loader").style.visibility = "visible";
+  document.getElementById("alertMsg").style.visibility = "hidden";
+
+  // Make the fetch request
+  fetch(fileurl, {
+    method: "GET", // You can use 'POST' if your API expects a POST request
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+    .then((response) => {
+      response.json();
+      if (response.status != 200) {
+        document.getElementById("alertMsg").style.visibility = "hidden";
+        document.getElementById("loader").style.visibility = "hidden";
+        document.getElementsByTagName("button")[1].disabled = false;
+        document.getElementsByTagName("button")[2].disabled = false;
+      }
+    }) // Parse the JSON from the response
+    .then((data) => {
+      document.getElementById("loader").style.visibility = "hidden";
+      document.getElementsByTagName("button")[1].disabled = false;
+      document.getElementsByTagName("button")[2].disabled = false;
+      console.log("Success:", data); // Handle the response data
+    })
+    .catch((error) => {
+      document.getElementById("loader").style.visibility = "hidden";
+      document.getElementsByTagName("button")[1].disabled = false;
+      document.getElementsByTagName("button")[2].disabled = false;
+      console.error("Error:", error); // Handle any errors
     });
 }

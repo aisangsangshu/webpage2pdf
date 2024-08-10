@@ -2,26 +2,21 @@ package com.webpdf.webpdf.controller;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.fasterxml.jackson.core.util.ByteArrayBuilder;
 import com.webpdf.webpdf.service.PdfService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -56,16 +51,16 @@ public class HomeController {
         }
 
         try {
-            Resource resource=new FileSystemResource(outputFile);
+            Resource resource = new FileSystemResource(outputFile);
             // Prepare resource and headers
             HttpHeaders headers = new HttpHeaders();
             headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + outputFile.getName() + "\"");
             headers.add(HttpHeaders.CONTENT_TYPE, "application/pdf");
 
             return ResponseEntity.ok()
-            .headers(headers)
-            .contentLength(resource.contentLength())
-            .body(resource);
+                    .headers(headers)
+                    .contentLength(resource.contentLength())
+                    .body(resource);
 
         } catch (IOException e) {
             logger.warning("Error reading or deleting file : " + e.getLocalizedMessage());
@@ -73,11 +68,16 @@ public class HomeController {
         }
     }
 
-    @GetMapping("/api/convert/{url}/{email}")
-    public ResponseEntity<String> convertAndSendEmail(@PathVariable("url") String url,
-            @PathVariable("email") String email) {
-        System.out.println("email called");
-        return new ResponseEntity<>(null, HttpStatus.OK);
+    @GetMapping("/api/convert/mail")
+    public ResponseEntity<String> convertAndSendEmail(@RequestParam("url") String url,
+            @RequestParam("email") String email) {
+
+        System.out.println("email called : "+url+" "+email);
+        boolean status=this.pdfService.sendMail(url, email);
+        if (!status) {
+            new ResponseEntity<>("faild", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>("sent", HttpStatus.OK);
     }
 
 }
