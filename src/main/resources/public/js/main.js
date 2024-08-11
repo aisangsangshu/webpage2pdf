@@ -15,7 +15,7 @@ function downloadFile() {
     errorMsg("You are Not Connected with Internet 🚨");
     return;
   }
-  const api = "https://honest-choice-chigger.ngrok-free.app/api/convert?url=";
+  const api = "http://localhost:8080/api/convert?url=";
   let url = document.getElementById("urlbox").value;
   let fileurl = api + encodeURIComponent(url); // Ensure URL is encoded
 
@@ -84,7 +84,7 @@ function sendEmail() {
     errorMsg("You are Not Connected with Internet 🚨");
     return;
   }
-  const api = "https://honest-choice-chigger.ngrok-free.app/api/convert/mail?url=";
+  const api = "http://localhost:8080/api/convert/mail?url=";
   let url = document.getElementById("urlbox").value;
   let email = document.getElementById("emailbox").value;
   let fileurl = api + encodeURIComponent(url) + "&&email=" + email;
