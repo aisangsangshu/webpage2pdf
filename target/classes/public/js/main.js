@@ -1,4 +1,20 @@
+var online = navigator.onLine;
+function showMsg(message) {
+  document.getElementById("successMsg").innerText = message;
+  var btn = document.getElementById("successBtn");
+  btn.click();
+}
+function errorMsg(message) {
+  document.getElementById("errorMsg").innerText = message;
+  var btn = document.getElementById("errorBtn");
+  btn.click();
+}
+
 function downloadFile() {
+  if (!online) {
+    errorMsg("You are Not Connected with Internet 🚨");
+    return;
+  }
   const api = "http://localhost:8080/api/convert?url=";
   let url = document.getElementById("urlbox").value;
   let fileurl = api + encodeURIComponent(url); // Ensure URL is encoded
@@ -11,17 +27,15 @@ function downloadFile() {
   document.getElementsByTagName("button")[1].disabled = true;
   document.getElementsByTagName("button")[2].disabled = true;
   document.getElementById("loader").style.visibility = "visible";
-  document.getElementById("alertMsg").style.visibility = "hidden";
-
   // Make the fetch request
   fetch(fileurl)
     .then((response) => {
       // Check if the request was successful
       if (!response.ok) {
-        document.getElementById("alertMsg").style.visibility = "visible";
         document.getElementById("loader").style.visibility = "hidden";
         document.getElementsByTagName("button")[1].disabled = false;
         document.getElementsByTagName("button")[2].disabled = false;
+        errorMsg("Something went wrong !🚨");
         throw new Error("Network response was not ok " + response.statusText);
       }
 
@@ -39,6 +53,8 @@ function downloadFile() {
       return response.blob().then((blob) => ({ blob, fileName }));
     })
     .then(({ blob, fileName }) => {
+      //show success message
+      showMsg("Webpage converted Successfully!");
       // Create a new link element
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob); // Create a URL for the Blob
@@ -57,17 +73,21 @@ function downloadFile() {
     .catch((error) => {
       // Handle errors here
       document.getElementById("loader").style.visibility = "hidden";
-      document.getElementById("alertMsg").style.visibility = "visible";
       document.getElementsByTagName("button")[1].disabled = false;
       document.getElementsByTagName("button")[2].disabled = false;
+      errorMsg("Something went wrong !🚨");
       console.error("There was a problem with the fetch operation:", error);
     });
 }
 function sendEmail() {
+  if (!online) {
+    errorMsg("You are Not Connected with Internet 🚨");
+    return;
+  }
   const api = "http://localhost:8080/api/convert/mail?url=";
   let url = document.getElementById("urlbox").value;
   let email = document.getElementById("emailbox").value;
-  let fileurl = api + encodeURIComponent(url) + "&&email=" + email; // Ensure URL is encoded
+  let fileurl = api + encodeURIComponent(url) + "&&email=" + email;
   console.log(fileurl);
   if (url === "" || email === "") {
     alert("Please Enter Valid inputs to proceed.");
@@ -77,8 +97,6 @@ function sendEmail() {
   document.getElementsByTagName("button")[1].disabled = true;
   document.getElementsByTagName("button")[2].disabled = true;
   document.getElementById("loader").style.visibility = "visible";
-  document.getElementById("alertMsg").style.visibility = "hidden";
-
   // Make the fetch request
   fetch(fileurl, {
     method: "GET", // You can use 'POST' if your API expects a POST request
@@ -87,24 +105,27 @@ function sendEmail() {
     },
   })
     .then((response) => {
-      response.json();
+      console.log(response);
       if (response.status != 200) {
-        document.getElementById("alertMsg").style.visibility = "hidden";
+        errorMsg("Something went wrong !🚨");
         document.getElementById("loader").style.visibility = "hidden";
         document.getElementsByTagName("button")[1].disabled = false;
         document.getElementsByTagName("button")[2].disabled = false;
+        throw new Error("something is wrong ");
       }
     }) // Parse the JSON from the response
     .then((data) => {
       document.getElementById("loader").style.visibility = "hidden";
       document.getElementsByTagName("button")[1].disabled = false;
       document.getElementsByTagName("button")[2].disabled = false;
-      console.log("Success:", data); // Handle the response data
+      showMsg("Webpage converted and sent to : " + email);
+      return;
     })
     .catch((error) => {
       document.getElementById("loader").style.visibility = "hidden";
       document.getElementsByTagName("button")[1].disabled = false;
       document.getElementsByTagName("button")[2].disabled = false;
+      errorMsg("Please check the Webpage url and Email Address ");
       console.error("Error:", error); // Handle any errors
     });
 }

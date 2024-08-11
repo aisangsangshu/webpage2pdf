@@ -75,7 +75,7 @@ public class HomeController {
         System.out.println("email called : "+url+" "+email);
         boolean status=this.pdfService.sendMail(url, email);
         if (!status) {
-            new ResponseEntity<>("faild", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("faild", HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>("sent", HttpStatus.OK);
     }
