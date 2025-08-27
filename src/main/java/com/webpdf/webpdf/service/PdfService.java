@@ -21,7 +21,7 @@ import jakarta.mail.internet.MimeMessage;
 @Service
 public class PdfService {
     Logger logger = Logger.getLogger(PdfService.class.getName());
-    public final String path = "/home/mannu/Documents/webpdf/src/main/data/";
+    public final String path = "E:\\webpage2pdf\\webpage2pdf\\";
 
     @Autowired
     private JavaMailSender javaMailSender;
